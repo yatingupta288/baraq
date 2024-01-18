@@ -1,7 +1,6 @@
-package com.assignment.baraq.controller;
+package com.assignment.baraq.Controller;
 
 import com.assignment.baraq.Model.Order;
-import com.assignment.baraq.Response.BuyerResponse;
 import com.assignment.baraq.Response.OrderResponse;
 import com.assignment.baraq.ServiceImpl.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;

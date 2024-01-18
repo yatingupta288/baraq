@@ -1,4 +1,4 @@
-package com.assignment.baraq.controller;
+package com.assignment.baraq.Controller;
 
 import com.assignment.baraq.Model.Buyer;
 import com.assignment.baraq.Response.BuyerResponse;

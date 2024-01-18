@@ -1,6 +1,5 @@
 package com.assignment.baraq.Model;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -15,19 +14,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order implements Serializable {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   private Long id;
 
-  @Column(name = "order_id")
+  @Column(name = "payment_mode")
   private String paymentMode;
 
   @Column(name = "quantity")

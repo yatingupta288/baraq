@@ -12,35 +12,37 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
   @Autowired
-  ProductRepo productRepo;
+  private ProductRepo productRepo;
 
   @Override
   public Long createProduct(String productName, int inventory, int price, String pickUpAddress) {
-    Product product =
-        Product.builder().productName(productName).price(price).pickUpAddress(pickUpAddress)
-            .inventory(inventory).build();
-    productRepo.save(product);
-    return product.getId();
+    Optional<Product> existingProduct =
+        productRepo.findByProductNameAndPickUpAddress(productName, pickUpAddress);
 
+    if (existingProduct.isPresent()) {
+      Product product = existingProduct.get();
+      product.setInventory(inventory);
+      product.setPickUpAddress(pickUpAddress);
+      return productRepo.save(product).getId();
+    } else {
+      Product newProduct =
+          Product.builder().productName(productName).price(price).pickUpAddress(pickUpAddress)
+              .inventory(inventory).build();
+      return productRepo.save(newProduct).getId();
+    }
   }
 
   @Override
   public Product getProduct(String productName) {
-    Optional<Product> product = productRepo.findByProductName(productName);
-    if (product.isPresent()) {
-      return product.get();
-    } else {
-      throw new RuntimeException("no such product exists");
-    }
+    return productRepo.findByProductName(productName)
+        .orElseThrow(() -> new RuntimeException("No such product exists"));
   }
 
   @Override
   public void deleteProduct(String productName) {
-    Optional<Product> product = productRepo.findByProductName(productName);
-    if (product.isPresent()) {
-      productRepo.delete(product.get());
-    } else {
-      throw new RuntimeException("no such product exists");
-    }
+    Product product = productRepo.findByProductName(productName)
+        .orElseThrow(() -> new RuntimeException("No such product exists"));
+
+    productRepo.delete(product);
   }
 }

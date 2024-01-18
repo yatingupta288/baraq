@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -37,12 +35,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Long createOrder(Long buyerId, Long productId, int quantity, String paymentMode) {
-    Optional<Order> order = orderRepo.findByBuyerIdAndProductId(buyerId, productId);
 
-    return order.orElseGet(() -> createNewOrder(buyerId, productId, quantity, paymentMode)).getId();
-  }
-
-  private Order createNewOrder(Long buyerId, Long productId, int quantity, String paymentMode) {
     Product product = getProduct(productId);
     Buyer buyer = getBuyer(buyerId);
 
@@ -52,11 +45,12 @@ public class OrderServiceImpl implements OrderService {
     newOrder.setPaymentMode(paymentMode);
     newOrder.setQuantity(quantity);
     newOrder.setProduct(product);
+    newOrder.setBuyer(buyer);
     orderRepo.save(newOrder);
 
     updateProductInventory(product, quantity);
 
-    return newOrder;
+    return newOrder.getId();
   }
 
   private Product getProduct(Long productId) {
@@ -92,6 +86,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void deleteOrder(Long orderId) {
     Order order = orderRepo.findById(orderId)
         .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));

@@ -12,9 +12,10 @@ import java.util.Optional;
 public interface PincodeServiceAbilityRepo extends JpaRepository<PinCodeServiceAbility, Long> {
 
   @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END AS exists "
-      + "FROM pincode_serviceability p WHERE "
-      + "p.source_pincode = :sourcePinCode AND p.destination_pincode = :destinationPinCode "
-      + "AND :paymentMode = ANY(p.payment_modes)", nativeQuery = true)
+      + "FROM pincode_serviceability p "
+      + "JOIN pincode_payment_mode pm on pm.pincode_serviceability_id = p.id "
+      + "WHERE p.source_pincode =:sourcePinCode and p.destination_pincode =:destinationPinCode "
+      + "and pm.payment_mode =:paymentMode", nativeQuery = true)
   boolean getBySourcePinCodeAndDestinationPinCodeAndPaymentModes(
       @Param("sourcePinCode") String sourcePinCode,
       @Param("destinationPinCode") String destinationPinCode,

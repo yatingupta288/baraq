@@ -31,7 +31,7 @@ public class BuyerServiceImpl implements BuyerService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public void deleteBuyer(Long buyerId) throws Exception{
+  public void deleteBuyer(Long buyerId) throws Exception {
     Optional<Buyer> buyer = buyerRepo.findById(buyerId);
     if (buyer.isEmpty()) {
       throw new RuntimeException("Buyer is not present");

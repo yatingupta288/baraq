@@ -1,20 +1,24 @@
 package com.assignment.baraq.Service;
 
+import com.assignment.baraq.DAO.PaymentModeRepo;
 import com.assignment.baraq.DAO.PincodeServiceAbilityRepo;
+import com.assignment.baraq.Model.PaymentMode;
 import com.assignment.baraq.Model.PinCodeServiceAbility;
 import com.assignment.baraq.ServiceImpl.PinCodeServiceAbilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class PinCodeServiceAbilityServiceImpl implements PinCodeServiceAbilityService {
 
   @Autowired
   private PincodeServiceAbilityRepo pincodeServiceAbilityRepo;
+
+  @Autowired
+  private PaymentModeRepo paymentModeRepo;
 
   public boolean isServiceAble(String sourcePinCode, String destinationPinCode,
       String paymentMode) {
@@ -24,45 +28,44 @@ public class PinCodeServiceAbilityServiceImpl implements PinCodeServiceAbilitySe
 
   public void createPinCodeServiceAbility(String sourcePinCode, String destinationPinCode,
       String paymentMode) {
-    Optional<PinCodeServiceAbility> pinCodeServiceAbility =
-        isAlreadyPresent(sourcePinCode, destinationPinCode);
-    if (pinCodeServiceAbility.isPresent()) {
-      pinCodeServiceAbility.get().getPaymentModes().add(paymentMode);
-      pincodeServiceAbilityRepo.save(pinCodeServiceAbility.get());
-    } else {
-      PinCodeServiceAbility pinCodeServiceAbility1 =
-          PinCodeServiceAbility.builder().sourcePinCode(sourcePinCode)
-              .destinationPinCode(destinationPinCode).paymentModes(addPaymentModeList(paymentMode))
-              .build();
+    PinCodeServiceAbility pinCodeServiceAbility =
+        getOrCreatePinCodeServiceAbility(sourcePinCode, destinationPinCode);
 
-      pincodeServiceAbilityRepo.save(pinCodeServiceAbility1);
-    }
+    PaymentMode paymentMode1 =
+        PaymentMode.builder().pinCodeServiceAbility(pinCodeServiceAbility).paymentMode(paymentMode)
+            .build();
+
+    paymentModeRepo.save(paymentMode1);
   }
+
 
   @Override
   public PinCodeServiceAbility getPinCodeServiceAbility(String sourcePinCode,
       String destinationPinCode) {
-    Optional<PinCodeServiceAbility> pinCodeServiceAbility =
-        isAlreadyPresent(sourcePinCode, destinationPinCode);
-    if (pinCodeServiceAbility.isPresent()) {
-      return pinCodeServiceAbility.get();
-    } else {
-      throw new RuntimeException(
-          "mapping does not exist for these pincodes" + sourcePinCode + " " + destinationPinCode);
-    }
+    return isAlreadyPresent(sourcePinCode, destinationPinCode).orElseThrow(
+        () -> new RuntimeException(
+            "Mapping does not exist for these pincodes " + sourcePinCode + " "
+                + destinationPinCode));
   }
 
   @Override
-  public void deletePinCodeServiceAbility(String sourcePinCode,
+  public void deletePinCodeServiceAbility(String sourcePinCode, String destinationPinCode) {
+    PinCodeServiceAbility pinCodeServiceAbility =
+        isAlreadyPresent(sourcePinCode, destinationPinCode).orElseThrow(() -> new RuntimeException(
+            "Mapping does not exist for these pincodes " + sourcePinCode + " "
+                + destinationPinCode));
+
+    pincodeServiceAbilityRepo.delete(pinCodeServiceAbility);
+  }
+
+  private PinCodeServiceAbility getOrCreatePinCodeServiceAbility(String sourcePinCode,
       String destinationPinCode) {
-    Optional<PinCodeServiceAbility> pinCodeServiceAbility =
-        isAlreadyPresent(sourcePinCode, destinationPinCode);
-    if (pinCodeServiceAbility.isPresent()) {
-      pincodeServiceAbilityRepo.delete(pinCodeServiceAbility.get());
-    } else {
-      throw new RuntimeException(
-          "mapping does not exist for these pincodes" + sourcePinCode + " " + destinationPinCode);
-    }
+    return isAlreadyPresent(sourcePinCode, destinationPinCode).orElseGet(() -> {
+      PinCodeServiceAbility newAbility = new PinCodeServiceAbility();
+      newAbility.setSourcePinCode(sourcePinCode);
+      newAbility.setDestinationPinCode(destinationPinCode);
+      return pincodeServiceAbilityRepo.save(newAbility);
+    });
   }
 
   private Optional<PinCodeServiceAbility> isAlreadyPresent(String sourcePinCode,
@@ -70,10 +73,5 @@ public class PinCodeServiceAbilityServiceImpl implements PinCodeServiceAbilitySe
     return pincodeServiceAbilityRepo.findBySourcePinCodeAndDestinationPinCode(sourcePinCode,
         destinationPinCode);
   }
-
-  private List<String> addPaymentModeList(String paymentMode) {
-    List<String> paymentModes = new ArrayList<>();
-    paymentModes.add(paymentMode);
-    return paymentModes;
-  }
 }
+

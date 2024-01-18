@@ -1,15 +1,23 @@
 package com.assignment.baraq.controller;
 
 import com.assignment.baraq.Model.Order;
+import com.assignment.baraq.Response.BuyerResponse;
+import com.assignment.baraq.Response.OrderResponse;
 import com.assignment.baraq.ServiceImpl.OrderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "baraq")
@@ -23,18 +31,37 @@ public class OrderController {
 
 
   @PostMapping(value = CREATE_ORDER, produces = MediaType.APPLICATION_JSON_VALUE)
-  public Long createOrder(@RequestParam Long buyerId, @RequestParam Long productId,
-      @RequestParam int quantity, @RequestParam String paymentMode) throws Exception {
-    return orderService.createOrder(buyerId, productId, quantity, paymentMode);
+  public ResponseEntity<Map<String, Object>> createOrder(@RequestParam Long buyerId,
+      @RequestParam Long productId, @RequestParam int quantity, @RequestParam String paymentMode)
+      throws Exception {
+    Map<String, Object> response = new HashMap<>();
+    try {
+      Long orderId = orderService.createOrder(buyerId, productId, quantity, paymentMode);
+      response.put("success", true);
+      response.put("orderId", orderId);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } catch (Exception e) {
+      response.put("success", false);
+      response.put("error", "Error creating Order: " + e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
   }
 
   @GetMapping(value = GET_ORDER, produces = MediaType.APPLICATION_JSON_VALUE)
-  public Order getOrder(@RequestParam Long orderId) throws Exception {
-    return orderService.getOrder(orderId);
+  public ResponseEntity<OrderResponse> getOrder(@RequestParam Long orderId) throws Exception {
+    Order order = orderService.getOrder(orderId);
+    ObjectMapper objectMapper = new ObjectMapper();
+    OrderResponse orderResponse = objectMapper.convertValue(order, OrderResponse.class);
+    return ResponseEntity.ok(orderResponse);
   }
 
   @DeleteMapping(value = DELETE_ORDER, produces = MediaType.APPLICATION_JSON_VALUE)
-  public void deleteOrder(@RequestParam Long orderId) throws Exception {
-    orderService.deleteOrder(orderId);
+  public ResponseEntity<String> deleteOrder(@RequestParam Long orderId) throws Exception {
+    try {
+      orderService.deleteOrder(orderId);
+      return ResponseEntity.ok("Order deleted successfully");
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting Order");
+    }
   }
 }

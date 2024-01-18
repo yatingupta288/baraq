@@ -1,4 +1,4 @@
-package com.assignment.baraq.ServiceImpl;
+package com.assignment.baraq.Service;
 
 import com.assignment.baraq.Model.PinCodeServiceAbility;
 

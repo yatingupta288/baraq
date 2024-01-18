@@ -2,7 +2,7 @@ package com.assignment.baraq.Controller;
 
 import com.assignment.baraq.Model.PinCodeServiceAbility;
 import com.assignment.baraq.Response.PinCodeServiceAbilityResponse;
-import com.assignment.baraq.ServiceImpl.PinCodeServiceAbilityService;
+import com.assignment.baraq.Service.PinCodeServiceAbilityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

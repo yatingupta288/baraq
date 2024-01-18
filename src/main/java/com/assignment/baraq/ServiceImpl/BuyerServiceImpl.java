@@ -1,8 +1,8 @@
-package com.assignment.baraq.Service;
+package com.assignment.baraq.ServiceImpl;
 
 import com.assignment.baraq.DAO.BuyerRepo;
 import com.assignment.baraq.Model.Buyer;
-import com.assignment.baraq.ServiceImpl.BuyerService;
+import com.assignment.baraq.Service.BuyerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +17,7 @@ public class BuyerServiceImpl implements BuyerService {
   private BuyerRepo buyerRepo;
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Long createBuyer(String buyerName, String address) {
     Buyer buyer = Buyer.builder().buyerName(buyerName).buyerAddress(address).build();
     buyerRepo.save(buyer);

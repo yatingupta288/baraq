@@ -1,10 +1,12 @@
-package com.assignment.baraq.Service;
+package com.assignment.baraq.ServiceImpl;
 
 import com.assignment.baraq.DAO.ProductRepo;
 import com.assignment.baraq.Model.Product;
-import com.assignment.baraq.ServiceImpl.ProductService;
+import com.assignment.baraq.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,6 +17,7 @@ public class ProductServiceImpl implements ProductService {
   private ProductRepo productRepo;
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Long createProduct(String productName, int inventory, int price, String pickUpAddress) {
     Optional<Product> existingProduct =
         productRepo.findByProductNameAndPickUpAddress(productName, pickUpAddress);
@@ -39,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void deleteProduct(String productName) {
     Product product = productRepo.findByProductName(productName)
         .orElseThrow(() -> new RuntimeException("No such product exists"));

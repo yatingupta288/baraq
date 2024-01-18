@@ -1,12 +1,14 @@
-package com.assignment.baraq.Service;
+package com.assignment.baraq.ServiceImpl;
 
 import com.assignment.baraq.DAO.PaymentModeRepo;
 import com.assignment.baraq.DAO.PincodeServiceAbilityRepo;
 import com.assignment.baraq.Model.PaymentMode;
 import com.assignment.baraq.Model.PinCodeServiceAbility;
-import com.assignment.baraq.ServiceImpl.PinCodeServiceAbilityService;
+import com.assignment.baraq.Service.PinCodeServiceAbilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -26,6 +28,8 @@ public class PinCodeServiceAbilityServiceImpl implements PinCodeServiceAbilitySe
         sourcePinCode, destinationPinCode, paymentMode);
   }
 
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void createPinCodeServiceAbility(String sourcePinCode, String destinationPinCode,
       String paymentMode) {
     PinCodeServiceAbility pinCodeServiceAbility =

@@ -2,7 +2,7 @@ package com.assignment.baraq.Controller;
 
 import com.assignment.baraq.Model.Product;
 import com.assignment.baraq.Response.ProductReponse;
-import com.assignment.baraq.ServiceImpl.ProductService;
+import com.assignment.baraq.Service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

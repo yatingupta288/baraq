@@ -1,4 +1,4 @@
-package com.assignment.baraq.Service;
+package com.assignment.baraq.ServiceImpl;
 
 import com.assignment.baraq.DAO.BuyerRepo;
 import com.assignment.baraq.DAO.OrderRepo;
@@ -6,9 +6,9 @@ import com.assignment.baraq.DAO.ProductRepo;
 import com.assignment.baraq.Model.Buyer;
 import com.assignment.baraq.Model.Order;
 import com.assignment.baraq.Model.Product;
-import com.assignment.baraq.ServiceImpl.OrderService;
-import com.assignment.baraq.ServiceImpl.PinCodeServiceAbilityService;
-import com.assignment.baraq.ServiceImpl.ProductService;
+import com.assignment.baraq.Service.OrderService;
+import com.assignment.baraq.Service.PinCodeServiceAbilityService;
+import com.assignment.baraq.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

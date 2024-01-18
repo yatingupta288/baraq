@@ -1,7 +1,7 @@
 package com.assignment.baraq.Controller;
 
 import com.assignment.baraq.Model.Product;
-import com.assignment.baraq.Response.ProductReponse;
+import com.assignment.baraq.Response.ProductResponse;
 import com.assignment.baraq.Service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +47,12 @@ public class ProductController {
   }
 
   @GetMapping(value = GET_PRODUCT, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ProductReponse> getOrder(@RequestParam String productName)
+  public ResponseEntity<ProductResponse> getOrder(@RequestParam String productName)
       throws Exception {
     Product product = productService.getProduct(productName);
     ObjectMapper objectMapper = new ObjectMapper();
-    ProductReponse productReponse = objectMapper.convertValue(product, ProductReponse.class);
-    return ResponseEntity.ok(productReponse);
+    ProductResponse productResponse = objectMapper.convertValue(product, ProductResponse.class);
+    return ResponseEntity.ok(productResponse);
   }
 
   @DeleteMapping(value = DELETE_PRODUCT, produces = MediaType.APPLICATION_JSON_VALUE)
